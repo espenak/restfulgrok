@@ -14,6 +14,10 @@ class MockRestViewAllImpl(MockRestView):
         return 'PUT called'
     def handle_delete(self):
         return 'DELETE called'
+    def handle_options(self):
+        return 'OPTIONS called'
+    def handle_head(self):
+        return 'HEAD called'
 
 
 class TestRestFramework(TestCase):
@@ -30,6 +34,8 @@ class TestRestFramework(TestCase):
         self.assertEquals(MockRestViewAllImpl(request=MockRequest('POST')).handle(), 'POST called')
         self.assertEquals(MockRestViewAllImpl(request=MockRequest('PUT')).handle(), 'PUT called')
         self.assertEquals(MockRestViewAllImpl(request=MockRequest('DELETE')).handle(), 'DELETE called')
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('OPTIONS')).handle(), 'OPTIONS called')
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('HEAD')).handle(), 'HEAD called')
 
     def test_get_requestdata(self):
         pydata = {'hello': 'world'}
