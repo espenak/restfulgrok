@@ -65,7 +65,7 @@ class GrokRestViewMixin(object):
         Decode the body of the request using :meth:`decode`, and return the
         decoded data.
         """
-        raw_request_body = self.request.get('BODY')
+        raw_request_body = self.request.get('BODY', '')
         decoded = self.decode(raw_request_body)
         return decoded
 
