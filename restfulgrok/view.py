@@ -85,7 +85,7 @@ class GrokRestViewMixin(object):
 
         :raise ValueError: If ``pydata`` can not be encoded.
         """
-        return json.dumps(pydata)
+        return json.dumps(pydata, indent=2)
 
     def decode(self, rawdata):
         """
