@@ -18,7 +18,7 @@ class MockRequest(object):
         self.method = method
         self.body = body
 
-    def get(self, key):
+    def get(self, key, default=None):
         if key == 'BODY':
             return self.body
         else:
