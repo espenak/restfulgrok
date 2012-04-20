@@ -1,5 +1,5 @@
 import json
-#from AccessControl.unauthorized import Unauthorized
+from AccessControl.unauthorized import Unauthorized
 
 
 class GrokRestViewMixin(object):
@@ -17,7 +17,10 @@ class GrokRestViewMixin(object):
     supported_methods = ['get', 'post', 'put', 'delete', 'options', 'head']
 
     def render(self):
-        responsedata = self.handle()
+        try:
+            responsedata = self.handle()
+        except Unauthorized:
+            return self.response_401_unauthorized()
         return self.encode(responsedata)
 
     def handle(self):
@@ -46,6 +49,9 @@ class GrokRestViewMixin(object):
 
     def response_400_bad_request(self, body):
         return self.error_response(400, 'Bad Request', body)
+
+    def response_401_unauthorized(self):
+        return self.error_response(401, 'Unauthorized', {'error': 'Unauthorized'})
 
     def handle_get(self):
         return self.response_405_method_not_allowed()
