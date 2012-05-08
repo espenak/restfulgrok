@@ -61,7 +61,7 @@ class HtmlContentType(ContentType):
         """
         Use :meth:`.get_cached_file` to get :obj:`.css_path`.
         """
-        return cls.get_cached_file('cache_template_source', cls.css_path)
+        return cls.get_cached_file('cache_css_source', cls.css_path)
 
     @classmethod
     def get_template_data(cls, pydata, view):
