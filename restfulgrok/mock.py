@@ -18,7 +18,8 @@ class MockRequest(object):
     def __init__(self, method='GET', body='', getdata={}):
         self.method = method
         self.body = body
-        self.getdata = {'BODY': self.body}
+        self.getdata = {'BODY': self.body,
+                        'mimetype': 'application/json'}
         self.getdata.update(getdata)
 
     def get(self, key, default=None):

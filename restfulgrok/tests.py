@@ -4,6 +4,7 @@ from unittest import TestCase
 from mock import MockRequest
 from mock import MockRestView
 from mock import MockRestViewWithFancyHtml
+from view import JsonContentType, YamlContentType
 
 
 class MockRestViewAllImpl(MockRestView):
@@ -55,6 +56,12 @@ class TestGrokRestViewMixin(TestCase):
     def test_get_requestmethod(self):
         self.assertEquals(MockRestView(request=MockRequest('GET')).get_requestmethod(), 'get')
 
+    def test_get_content_type(self):
+        self.assertEquals(MockRestView(request=MockRequest('GET', getdata={'mimetype': 'application/json'})).get_content_type(),
+                          JsonContentType)
+        self.assertEquals(MockRestView(request=MockRequest('GET', getdata={'mimetype': 'application/yaml'})).get_content_type(),
+                          YamlContentType)
+
     def test_response_400_bad_request(self):
         view = MockRestView(request=MockRequest('GET'))
         data = {'hello': 'world'}
@@ -80,7 +87,7 @@ class TestGrokRestViewMixin(TestCase):
   - b.2
 - c
 """
-        result = View(request=MockRequest('GET', yamldata, getdata={'contenttype': 'application/yaml'})).render()
+        result = View(request=MockRequest('GET', yamldata, getdata={'mimetype': 'application/yaml'})).render()
         outdata = yaml.safe_load(result)
         self.assertEquals(outdata, ['a', ['b.1', 'b.2'], 'c'])
 
@@ -91,8 +98,8 @@ class TestGrokRestViewWithFancyHtmlMixin(TestCase):
         class View(MockRestViewWithFancyHtml):
             def handle_get(self):
                 return {'hello': 'world'}
-        output = View(request=MockRequest('GET')).render()
-        self.assertTrue('?contenttype=text/html' in output)
+        output = View(request=MockRequest('GET', getdata={'mimetype': 'text/html'})).render()
+        self.assertTrue('?mimetype=text/html' in output)
 
 
 from example_tests import TestExampleRestMixin

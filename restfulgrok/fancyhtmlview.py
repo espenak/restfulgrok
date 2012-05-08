@@ -2,36 +2,18 @@ from jinja2 import Template
 from pkg_resources import resource_string
 
 from view import GrokRestViewMixin
+from view import ContentType, ContentTypesRegistry
+from view import JsonContentType
 
 
 
-json_description = """
-Javascript Object Notation, a lightweight data-interchange format with parsers
-available for most programming languages. The Python programming language has
-<a href="http://docs.python.org/library/json.html">native support</a> for JSON.
-Read more on the <a href="http://json.org/">JSON website</a>.
-"""
-
-yaml_description = """
-YAML Ain't Markup Language, a lightweight and easily human-readable
-data-interchange format with parsers available for most programming languages.
-Read more on the <a href="http://yaml.org/">YAML website</a>.
-"""
-
-
-class GrokRestViewWithFancyHtmlMixin(GrokRestViewMixin):
-    default_content_type = 'text/html'
-
-    #: Content types listed in...
-    html_listed_contenttypes = {'application/json': json_description,
-                                'application/yaml': yaml_description,
-                                'text/html': 'The current view.'}
-
-    encoders = GrokRestViewMixin.encoders.copy()
-    encoders['text/html'] = 'encode_html'
-
-    decoders = GrokRestViewMixin.decoders.copy()
-    decoders['text/html'] = 'decode_null'
+class HtmlContentType(ContentType):
+    """
+    XHTML content type.
+    """
+    mimetype = 'text/html'
+    extension = 'html'
+    description = 'Formatted HTML view with help for the REST API.'
 
     #: If ``True``, reload template on each request. If ``False``, cache the
     #: template data in the class after first read.
@@ -79,22 +61,27 @@ class GrokRestViewWithFancyHtmlMixin(GrokRestViewMixin):
         """
         return cls.get_cached_file('cache_template_source', cls.css_path)
 
-    def get_template_data(self, pydata):
+    @classmethod
+    def get_template_data(cls, pydata, view):
         """
         Get the template data.
 
         :return: Template data.
         :rtype: dict
         """
-        jsondata = self.encode_json(pydata)
+        jsondata = JsonContentType.dumps(pydata)
         return dict(jsondata=jsondata,
-                    css=self.get_css_source(),
-                    listed_contenttypes=self.html_listed_contenttypes,
-                    pagetitle = self.html_pagetitle)
+                    css=cls.get_css_source(),
+                    content_types=view.content_types,
+                    pagetitle = cls.html_pagetitle)
 
-    def encode_html(self, pydata):
-        """
-        Encode as text/html.
-        """
-        template = Template(self.__class__.get_template_source())
-        return template.render(**self.get_template_data(pydata)).encode('utf-8')
+    @classmethod
+    def dumps(cls, pydata, view):
+        template = Template(cls.get_template_source())
+        return template.render(**cls.get_template_data(pydata, view)).encode('utf-8')
+
+
+
+class GrokRestViewWithFancyHtmlMixin(GrokRestViewMixin):
+    default_mimetype = 'text/html'
+    content_types = GrokRestViewMixin.content_types + ContentTypesRegistry(HtmlContentType)

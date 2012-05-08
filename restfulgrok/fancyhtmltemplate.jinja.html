@@ -61,15 +61,15 @@
                                 <th>Description</th>
                         </thead>
                         <tbody>
-                            {% for contenttype, description in listed_contenttypes.iteritems() %}
+                            {% for contenttype in content_types %}
                             <tr>
                                 <td>{{ contenttype }}</td>
                                 <td style="width:130px;">
-                                    <a href="?contenttype={{ contenttype }}">view</a> |
-                                    <a href="?contenttype={{ contenttype }}&downloadfile=true">download</a>
+                                    <a href="?mimetype={{ contenttype.mimetype }}">view</a> |
+                                    <a href="?mimetype={{ contenttype.mimetype }}&downloadfile=true">download</a>
                                 </td>
                                 <td>
-                                    {{ description }}
+                                    {{ contenttype.description }}
                                 </td>
                             </tr>
                             {% endfor %}
