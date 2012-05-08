@@ -1,4 +1,5 @@
 from view import GrokRestViewMixin
+from fancyhtmlview import GrokRestViewWithFancyHtmlMixin
 
 
 class MockResponse(object):
@@ -34,6 +35,12 @@ class MockContext(object):
 
 
 class MockRestView(GrokRestViewMixin):
+    def __init__(self, request=None, response=MockResponse(), context=None):
+        self.request = request
+        self.response = response
+        self.context = context
+
+class MockRestViewWithFancyHtml(GrokRestViewWithFancyHtmlMixin):
     def __init__(self, request=None, response=MockResponse(), context=None):
         self.request = request
         self.response = response

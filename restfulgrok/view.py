@@ -16,10 +16,15 @@ class GrokRestViewMixin(object):
     """
     supported_methods = ['get', 'post', 'put', 'delete', 'options', 'head']
 
+    default_content_type = 'application/json'
     encoders = {'application/json': 'encode_json',
                 'application/yaml': 'encode_yaml'}
     decoders = {'application/json': 'decode_json',
                 'application/yaml': 'decode_yaml'}
+
+    content_type_to_extension_map = {'application/json': 'json',
+                                     'application/yaml': 'yaml',
+                                     'text/html': 'html'}
 
     def render(self):
         """
@@ -40,12 +45,12 @@ class GrokRestViewMixin(object):
         Use :meth:`get_input_content_type` and :meth:`get_output_content_type`
         to get the results.
         """
-        getformat = self.request.get('format')
-        self._input_content_type = 'application/json'
-        self._output_content_type = 'application/json'
-        if getformat and getformat in self.decoders and getformat in self.encoders:
-            self._input_content_type = getformat
-            self._output_content_type = getformat
+        getcontenttype = self.request.get('contenttype')
+        self._input_content_type = self.default_content_type
+        self._output_content_type = self.default_content_type
+        if getcontenttype and getcontenttype in self.decoders and getcontenttype in self.encoders:
+            self._input_content_type = getcontenttype
+            self._output_content_type = getcontenttype
 
     def get_output_content_type(self):
         """
@@ -63,6 +68,25 @@ class GrokRestViewMixin(object):
             self.detect_content_types()
         return self._input_content_type
 
+    def add_attachment_header(self):
+        """
+        Adds Content-Disposition header for filedownload if "downloadfile=yes"
+        is in the querystring (request.get).
+        """
+        if self.request.get('downloadfile') == 'true':
+            filename = self.context.id
+            extension = self.content_type_to_extension_map[self.get_output_content_type()]
+            if extension:
+                filename += '.' + extension
+            self.response.setHeader('Content-Disposition', 'attachment; filename={0}'.format(filename))
+
+    def set_contenttype_header(self):
+        """
+        Set the content type header. Called by :meth:`handle`, and may be overridden.
+        """
+        self.response.setHeader('Content-Type',
+                                '{0}; charset=UTF-8'.format(self.get_output_content_type()))
+
     def handle(self):
         """
         Takes care of all the logic for :meth:`render`, except that it does not
@@ -70,8 +94,8 @@ class GrokRestViewMixin(object):
         use in tests or custom render() implementations.
         """
         self.detect_content_types()
-        self.response.setHeader('Content-Type',
-                                '{0}; charset=UTF-8'.format(self.get_output_content_type()))
+        self.set_contenttype_header()
+        self.add_attachment_header()
         if self.get_requestmethod() in self.supported_methods:
             return getattr(self, 'handle_' + self.get_requestmethod())()
         else:
@@ -156,6 +180,12 @@ class GrokRestViewMixin(object):
     # Encoders and decoders
     #
     ###################################################################
+    def decode_null(self, rawdata):
+        """
+        Decoder that just returns ``rawdata`` without any changes.
+        """
+        return rawdata
+
     def decode_json(self, rawdata):
         return json.loads(rawdata)
     def encode_json(self, pydata):
@@ -169,10 +199,9 @@ class GrokRestViewMixin(object):
 
     def encode_yaml(self, pydata):
         try:
-            return yaml.safe_dump(pydata)
+            return yaml.safe_dump(pydata, default_flow_style=False)
         except yaml.YAMLError, e:
             raise ValueError(str(e))
-
 
     def handle_get(self):
         """

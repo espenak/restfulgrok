@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from mock import MockRequest
 from mock import MockRestView
+from mock import MockRestViewWithFancyHtml
 
 
 class MockRestViewAllImpl(MockRestView):
@@ -20,7 +21,7 @@ class MockRestViewAllImpl(MockRestView):
         return {'msg': 'HEAD called'}
 
 
-class TestRestFramework(TestCase):
+class TestGrokRestViewMixin(TestCase):
     def test_handle_unsupported(self):
         for method in ('GET', 'POST', 'PUT', 'DELELTE', 'OPTIONS', 'HEAD'):
             view = MockRestView(request=MockRequest(method))
@@ -79,10 +80,19 @@ class TestRestFramework(TestCase):
   - b.2
 - c
 """
-        result = View(request=MockRequest('GET', yamldata, getdata={'format': 'application/yaml'})).render()
+        result = View(request=MockRequest('GET', yamldata, getdata={'contenttype': 'application/yaml'})).render()
         outdata = yaml.safe_load(result)
         self.assertEquals(outdata, ['a', ['b.1', 'b.2'], 'c'])
 
+
+
+class TestGrokRestViewWithFancyHtmlMixin(TestCase):
+    def test_handle_html(self):
+        class View(MockRestViewWithFancyHtml):
+            def handle_get(self):
+                return {'hello': 'world'}
+        output = View(request=MockRequest('GET')).render()
+        self.assertTrue('?content-type=text/html' in output)
 
 
 from example_tests import TestExampleRestMixin
