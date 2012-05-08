@@ -48,7 +48,7 @@ copyright = u'2012, Espen Angell Kristiansen'
 # built documents.
 #
 # The short X.Y version.
-from restfulgrok.version import version
+from restfulgrok import version
 # The full version, including alpha/beta/rc tags.
 release = version
 

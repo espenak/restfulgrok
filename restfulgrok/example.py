@@ -1,7 +1,7 @@
-from restfulgrok import GrokRestViewMixin
+from restfulgrok.fancyhtmlview import GrokRestViewWithFancyHtmlMixin
 
 
-class ExampleRestViewMixin(GrokRestViewMixin):
+class ExampleRestViewMixin(GrokRestViewWithFancyHtmlMixin):
     def handle_get(self):
         # Return something that can be encoded by JSON and YAML
         return {'hello': 'world'}

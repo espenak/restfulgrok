@@ -40,10 +40,16 @@
             <!-- Main hero unit for a primary marketing message or call to action -->
             <div class="hero-unit">
                 <h1>{{ pagetitle }}</h1>
-                <p>This is the <em>text/html</em> content-type view for this RESTful API.</p>
                 <p>
+                {% block herotext %}
+                    This is the <em>text/html</em> content-type view for this RESTful API.
+                {% endblock %}
+                </p>
+                <p>
+                    {% block herobuttons %}
                     <a class="btn btn-primary btn-large" href="#contenttypes" href="">Content types &raquo;</a>
                     <a class="btn btn-large" href="#data">Data &raquo;</a>
+                    {% endblock %}
                 </p>
             </div>
 

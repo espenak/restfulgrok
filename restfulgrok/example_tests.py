@@ -1,9 +1,9 @@
 from unittest import TestCase
+from restfulgrok.mock import MockResponse
+from restfulgrok.mock import MockRequest
+from restfulgrok.mock import MockContext
 
 from example import ExampleRestViewMixin
-from mock import MockResponse
-from mock import MockRequest
-from mock import MockContext
 
 
 class MockExampleRestMixin(ExampleRestViewMixin):

@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from restfulgrok.version import version
+from restfulgrok import version
 
 
 setup(name = 'restfulgrok',
