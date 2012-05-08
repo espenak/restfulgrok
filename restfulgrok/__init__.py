@@ -1,3 +1,4 @@
+version = '1.0'
 from mock import MockRequest
 from mock import MockResponse
 from mock import MockContext

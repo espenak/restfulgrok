@@ -1,23 +1,16 @@
-from os.path import join, dirname
 from setuptools import setup, find_packages
+from restfulgrok import version
 
-this_dir = dirname(__file__)
-
-try:
-    f = open(join(this_dir, 'README.rst'))
-    long_description = f.read().strip()
-    f.close()
-except IOError:
-    long_description = None
 
 setup(name = 'restfulgrok',
       description = 'RESTful interface for grok (and five.grok).',
-      version = '1.0',
+      version = version,
       license='BSD',
       url = 'https://github.com/espenak/restfulgrok',
       author = 'Espen Angell Kristiansen',
       packages=find_packages(exclude=['ez_setup']),
       install_requires = ['setuptools'],
+      long_description=open('README.rst').read(),
       include_package_data=True,
       zip_safe=True,
       classifiers=[
