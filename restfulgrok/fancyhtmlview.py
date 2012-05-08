@@ -19,7 +19,7 @@ class HtmlContentType(ContentType):
 
     #: If ``True``, reload template on each request. If ``False``, cache the
     #: template data in the class after first read.
-    template_debug = True
+    template_debug = False
 
     #: The :func:`pkg_resources.resource_string` args for the template file.
     template_path = (__name__, 'fancyhtmltemplate.jinja.html')
