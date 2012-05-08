@@ -2,23 +2,23 @@
 restfulgrok API
 ===============
 
-The view module
+restfulgrok.view
 -----------------
 .. automodule:: restfulgrok.view
    :members:
 
-The fancyhtmlview module
-------------------------------
+restfulgrok.fancyhtmlview
+-------------------------
 .. automodule:: restfulgrok.fancyhtmlview
    :members:
 
-The contenttype module
-----------------------
+restfulgrok.contenttype
+-----------------------
 .. automodule:: restfulgrok.contenttype
     :members:
 
-The mock module
------------------
+restfulgrok.mock
+----------------
 Mock classes to simplify testing. See the sourcecode (or the *source* links below).
 
 .. automodule:: restfulgrok.mock
