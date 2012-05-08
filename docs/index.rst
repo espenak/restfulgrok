@@ -6,14 +6,22 @@
 Welcome to restfulgrok's documentation!
 =======================================
 
+
 ``restfulgrok`` provides a very simple RESTful view mixin for
 ``five.grok.View``. It is not meant to be a full-featured REST library, only a
 quick solution for simple REST APIs using ``five.grok.View``.
 
 Features:
 
-- Content negotiation.
-- Data conversion (JSON and YAML by default)
+- Content negotiation:
+    - Assumes same input and out mimetype (simplifies the implementation)
+    - Can be specified in a GET parameter (E.g.: ``?mimetype=application/yaml``)
+    - Can be specified use HTTP ACCEPT header.
+    - Supports:
+        - JSON
+        - YAML
+        - HTML (read only)
+        - ... :ref:`customcontenttype`
 - HTTP response helpers for common response types.
 
 
@@ -38,28 +46,14 @@ And finally use the mixin to create a ``grok.View``::
         grok.name('rest')
 
 
+Documentation
+=============
 
-API docs
-========
+.. toctree::
+   :maxdepth: 2
 
-GrokRestViewMixin
------------------
-.. autoclass:: restfulgrok.view.GrokRestViewMixin
-   :members:
-
-GrokRestViewWithFancyHtmlMixin
-------------------------------
-.. autoclass:: restfulgrok.fancyhtmlview.GrokRestViewWithFancyHtmlMixin
-   :members:
-
-
-The mock module
------------------
-Mock classes to simplify testing. See the sourcecode (or the *source* links below).
-
-.. automodule:: restfulgrok.mock
-   :members:
-   :undoc-members:
+   api
+   customcontenttype
 
 
 Indices and tables

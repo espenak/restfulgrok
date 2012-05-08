@@ -2,8 +2,8 @@ from jinja2 import Template
 from pkg_resources import resource_string
 
 from view import GrokRestViewMixin
-from view import ContentType, ContentTypesRegistry
-from view import JsonContentType
+from contenttype import ContentType, ContentTypesRegistry
+from contenttype import JsonContentType
 
 
 
