@@ -24,8 +24,11 @@
                     <a class="brand" href="#">{{ pagetitle }}</a>
                     <div class="nav-collapse">
                         <ul class="nav">
+                            {% block nav_pre_content_types %}{% endblock %}
                             <li><a href="#contenttypes">Content types</a></li>
+                            {% block nav_pre_data %}{% endblock %}
                             <li><a href="#data">Data</a></li>
+                            {% block nav_post_data %}{% endblock %}
                         </ul>
                     </div>
                 </div>
@@ -44,8 +47,8 @@
                 </p>
             </div>
 
-            <!-- Example row of columns -->
             <div class="row">
+                {% block pre_content_types %}{% endblock %}
                 <div class="span12">
                     <div class="page-header">
                         <h1 id="contenttypes">Supported content-types</h1>
@@ -72,12 +75,17 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
 
+                {% block pre_data %}{% endblock %}
+                <div class="span12">
                     <div class="page-header">
                         <h1 id="data">Data <small>Encoded as application/json</small></h1>
                     </div>
                     <pre>{{ jsondata }}</pre>
+
                 </div>
+                {% block post_data %}{% endblock %}
             </div>
         </div>
     </body>
