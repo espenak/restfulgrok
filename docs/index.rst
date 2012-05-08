@@ -21,30 +21,16 @@ Getting started
 ===============
 
 
-Create a class that inherit from GrokRestViewMixin::
+Create a class that inherit from GrokRestViewMixin:
 
-    from restfulgrok import GrokRestViewMixin
-    class ExampleRestViewMixin(GrokRestViewMixin):
-        def handle_get(self):
-            # Return something that can be encoded by JSON and YAML
-            return {'hello': 'world'}
+.. literalinclude:: ../restfulgrok/example.py
 
-        def handle_post(self):
-            try:
-                # Decode request body as a dict (JSON or YAML)
-                request_data = self.get_requestdata_dict()
-            except ValueError, e:
-                # Did not get a dict
-                return self.response_400_bad_request({'error': str(e)})
-            else:
-                # save to database or something....
-                # --- not included in example ---
+And a testcase:
 
-                # Respond with 201 status and the request_data
-                # NOTE: If you just return normally, 200 response status is used
-                return self.response_201_created(request_data)
+.. literalinclude:: ../restfulgrok/example_tests.py
 
-And a ``grok.View``::
+
+And finally use the mixin to create a ``grok.View``::
 
     from five import grok
     class ExampleRestView(ExampleRestViewMixin, grok.View):
@@ -52,28 +38,23 @@ And a ``grok.View``::
         grok.name('rest')
 
 
-And a testcase::
-
-    class MockExampleRestMixin(ExampleRestViewMixin):
-        def __init__(self, parentnode, id, method='GET', body=''):
-            self.response = MockResponse()
-            self.request = MockRequest(method, body=body)
-            self.context = MockContext(parentnode, id)
-
-    class TestRestFramework(TestCase):
-        def test_get(self):
-            result = MockExampleRestMixin(None, '10', 'GET').handle()
-            self.assertEquals(result, {'hello': 'world'})
-
-
-
 
 API docs
 ========
 
+views
+-----------------
 .. autoclass:: restfulgrok.view.GrokRestViewMixin
    :members:
 
+
+mock
+-----------------
+Mock classes to simplify testing. See the sourcecode (or the *source* links below).
+
+.. automodule:: restfulgrok.mock
+   :members:
+   :undoc-members:
 
 
 Indices and tables

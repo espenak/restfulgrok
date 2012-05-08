@@ -68,6 +68,9 @@ class TestRestFramework(TestCase):
         self.assertEquals(view.response.status, (405, 'Method Not Allowed: GET'))
 
 
+
+from example_tests import TestExampleRestMixin
+
 if __name__ == '__main__':
     import unittest
     unittest.main()
