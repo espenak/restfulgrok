@@ -1,6 +1,6 @@
 import json
 import yaml
-
+import negotiator
 
 
 class ContentType(object):
@@ -162,7 +162,6 @@ class ContentTypesRegistry(object):
         :return: An acceptable mimetype, or ``None`` if no acceptable mimetype is found.
         :rtype: str
         """
-        import negotiator
         acceptable = []
         for content_type in self._registry.itervalues():
             acceptable.append(negotiator.AcceptParameters(negotiator.ContentType(content_type.mimetype)))
