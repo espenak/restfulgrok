@@ -1,15 +1,14 @@
 from setuptools import setup, find_packages
-from restfulgrok import version
 
 
 setup(name = 'restfulgrok',
       description = 'RESTful interface for grok (and five.grok).',
-      version = version,
+      version = '1.0',
       license='BSD',
       url = 'https://github.com/espenak/restfulgrok',
       author = 'Espen Angell Kristiansen',
       packages=find_packages(exclude=['ez_setup']),
-      install_requires = ['setuptools'],
+      install_requires = ['distribute', 'PyYAML'],
       long_description=open('README.rst').read(),
       include_package_data=True,
       zip_safe=True,

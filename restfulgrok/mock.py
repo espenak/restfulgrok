@@ -14,20 +14,19 @@ class MockResponse(object):
 
 
 class MockRequest(object):
-    def __init__(self, method='GET', body=''):
+    def __init__(self, method='GET', body='', getdata={}):
         self.method = method
         self.body = body
+        self.getdata = {'BODY': self.body}
+        self.getdata.update(getdata)
 
     def get(self, key, default=None):
-        if key == 'BODY':
-            return self.body
-        else:
-            raise KeyError()
+        return self.getdata.get(key, default)
 
 
 class MockContext(object):
     def __init__(self, parentnode=None, id=None):
-        self.bibfolder = parentnode
+        self.parentnode = parentnode
         self.id = id
 
     def getParentNode(self):
