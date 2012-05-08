@@ -92,7 +92,7 @@ class TestGrokRestViewWithFancyHtmlMixin(TestCase):
             def handle_get(self):
                 return {'hello': 'world'}
         output = View(request=MockRequest('GET')).render()
-        self.assertTrue('?content-type=text/html' in output)
+        self.assertTrue('?contenttype=text/html' in output)
 
 
 from example_tests import TestExampleRestMixin

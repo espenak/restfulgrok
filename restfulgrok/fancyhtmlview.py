@@ -20,60 +20,81 @@ Read more on the <a href="http://yaml.org/">YAML website</a>.
 
 
 class GrokRestViewWithFancyHtmlMixin(GrokRestViewMixin):
-    """
-
-    .. attribute:: template_debug
-
-        If ``True``, reload template on each request. If ``False``, cache the
-        template data in the class after first read.
-
-    .. attribute:: template_path
-
-        The ``pkg_resources.resource_string`` args for the template.
-        Defaults to::
-
-            ('restfulgrok', 'fancyhtmltemplate.jinja.html')
-
-    .. attribute:: html_pagetitle
-
-        Variable forwarded to the template as ``pagetitle``.
-        Defaults to: ``"REST API``.
-    """
     default_content_type = 'text/html'
 
+    #: Content types listed in...
     html_listed_contenttypes = {'application/json': json_description,
                                 'application/yaml': yaml_description,
                                 'text/html': 'The current view.'}
 
     encoders = GrokRestViewMixin.encoders.copy()
     encoders['text/html'] = 'encode_html'
+
     decoders = GrokRestViewMixin.decoders.copy()
     decoders['text/html'] = 'decode_null'
 
+    #: If ``True``, reload template on each request. If ``False``, cache the
+    #: template data in the class after first read.
     template_debug = True
+
+    #: The :func:`pkg_resources.resource_string` args for the template file.
     template_path = (__name__, 'fancyhtmltemplate.jinja.html')
-    css = resource_string(__name__, 'bootstrap.min.css')
+
+    #: The :func:`pkg_resources.resource_string` args for the css file.
+    css_path = (__name__, 'bootstrap.min.css')
+
+    #: Variable forwarded to the template as ``pagetitle``.
     html_pagetitle = 'REST API'
 
     @classmethod
-    def get_templatedata(cls):
+    def get_cached_file(cls, cacheattr, resource_string_path):
         """
-        Load the template from :attr:`template_path`. If :attr:`template_debug`
-        is ``False``, cache the results.
+        Get file contents using :func:`pkg_resources.resource_string`. If
+        :obj:`.template_debug` is ``False``, cache the data in the
+        class attribute ``cacheattr`` and use the cache on subsequent calls.
+
+        :param cacheattr: Attribute to use a cache of the file contents.
+        :param resource_string: :func:`pkg_resources.resource_string` path to the file.
         """
-        if not cls.template_debug and hasattr(cls, 'template_data'):
-            return cls.template_data
+        if cls.template_debug:
+            return resource_string(*resource_string_path)
         else:
-            template_data = resource_string(*cls.template_path)
-            if not cls.template_debug:
-                cls.template_data = template_data
-            return template_data
+            if not hasattr(cls, cacheattr):
+                source = resource_string(*resource_string_path)
+                setattr(cls, cacheattr, source)
+            return getattr(cls, cacheattr)
+
+
+    @classmethod
+    def get_template_source(cls):
+        """
+        Use :meth:`.get_cached_file` to get :obj:`.template_path`.
+        """
+        return cls.get_cached_file('cache_template_source', cls.template_path)
+
+    @classmethod
+    def get_css_source(cls):
+        """
+        Use :meth:`.get_cached_file` to get :obj:`.css_path`.
+        """
+        return cls.get_cached_file('cache_template_source', cls.css_path)
+
+    def get_template_data(self, pydata):
+        """
+        Get the template data.
+
+        :return: Template data.
+        :rtype: dict
+        """
+        jsondata = self.encode_json(pydata)
+        return dict(jsondata=jsondata,
+                    css=self.get_css_source(),
+                    listed_contenttypes=self.html_listed_contenttypes,
+                    pagetitle = self.html_pagetitle)
 
     def encode_html(self, pydata):
-        jsondata = self.encode_json(pydata)
-        template = Template(self.__class__.get_templatedata())
-        return template.render(jsondata=jsondata,
-                               css=self.css,
-                               listed_contenttypes=self.html_listed_contenttypes,
-                               pagetitle = self.html_pagetitle
-                              ).encode('utf-8')
+        """
+        Encode as text/html.
+        """
+        template = Template(self.__class__.get_template_source())
+        return template.render(**self.get_template_data(pydata)).encode('utf-8')

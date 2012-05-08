@@ -42,13 +42,18 @@ And finally use the mixin to create a ``grok.View``::
 API docs
 ========
 
-views
+GrokRestViewMixin
 -----------------
 .. autoclass:: restfulgrok.view.GrokRestViewMixin
    :members:
 
+GrokRestViewWithFancyHtmlMixin
+------------------------------
+.. autoclass:: restfulgrok.fancyhtmlview.GrokRestViewWithFancyHtmlMixin
+   :members:
 
-mock
+
+The mock module
 -----------------
 Mock classes to simplify testing. See the sourcecode (or the *source* links below).
 
