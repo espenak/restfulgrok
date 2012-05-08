@@ -10,6 +10,9 @@ class CouldNotDetermineContentType(Exception):
     """
 
 class GrokRestViewMixin(object):
+    """
+    Mix-in class for ``five.grok.View``.
+    """
     #: List of supported HTTP request methods in lowercase.
     #: Defaults to ``['get', 'post', 'put', 'delete', 'options', 'head']``.
     #: You do not have to override this to disallow any of

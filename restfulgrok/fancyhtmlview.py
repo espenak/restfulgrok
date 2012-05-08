@@ -9,7 +9,9 @@ from contenttype import JsonContentType
 
 class HtmlContentType(ContentType):
     """
-    XHTML content type.
+    XHTML content type. Provides a dumps-method that uses a jinja2-template
+    to generate a bootrap-styled HTML-document which is suitable as
+    a default view for a REST API.
     """
     mimetype = 'text/html'
     extension = 'html'
@@ -83,5 +85,7 @@ class HtmlContentType(ContentType):
 
 
 class GrokRestViewWithFancyHtmlMixin(GrokRestViewMixin):
-    default_mimetype = 'text/html'
+    """
+    Adds :class:`HtmlContentType` to ``content_types``.
+    """
     content_types = GrokRestViewMixin.content_types + ContentTypesRegistry(HtmlContentType)

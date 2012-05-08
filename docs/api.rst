@@ -2,14 +2,14 @@
 restfulgrok API
 ===============
 
-GrokRestViewMixin
+The view module
 -----------------
-.. autoclass:: restfulgrok.view.GrokRestViewMixin
+.. automodule:: restfulgrok.view
    :members:
 
-GrokRestViewWithFancyHtmlMixin
+The fancyhtmlview module
 ------------------------------
-.. autoclass:: restfulgrok.fancyhtmlview.GrokRestViewWithFancyHtmlMixin
+.. automodule:: restfulgrok.fancyhtmlview
    :members:
 
 The contenttype module
