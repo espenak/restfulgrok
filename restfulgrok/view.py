@@ -40,8 +40,12 @@ class GrokRestViewMixin(object):
         Use :meth:`get_input_content_type` and :meth:`get_output_content_type`
         to get the results.
         """
+        getformat = self.request.get('format')
         self._input_content_type = 'application/json'
         self._output_content_type = 'application/json'
+        if getformat and getformat in self.decoders and getformat in self.encoders:
+            self._input_content_type = getformat
+            self._output_content_type = getformat
 
     def get_output_content_type(self):
         """
@@ -139,9 +143,6 @@ class GrokRestViewMixin(object):
         """
         return getattr(self, self.encoders[self.get_output_content_type()])(pydata)
 
-    def encode_json(self, pydata):
-        return json.dumps(pydata, indent=2)
-
     def decode_input_data(self, rawdata):
         """
         Decode the given ``rawdata``.
@@ -150,8 +151,28 @@ class GrokRestViewMixin(object):
         """
         return getattr(self, self.decoders[self.get_input_content_type()])(rawdata)
 
+    ###################################################################
+    #
+    # Encoders and decoders
+    #
+    ###################################################################
     def decode_json(self, rawdata):
         return json.loads(rawdata)
+    def encode_json(self, pydata):
+        return json.dumps(pydata, indent=2)
+
+    def decode_yaml(self, rawdata):
+        try:
+            return yaml.safe_load(rawdata)
+        except yaml.YAMLError, e:
+            raise ValueError(str(e))
+
+    def encode_yaml(self, pydata):
+        try:
+            return yaml.safe_dump(pydata)
+        except yaml.YAMLError, e:
+            raise ValueError(str(e))
+
 
     def handle_get(self):
         """

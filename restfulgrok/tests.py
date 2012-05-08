@@ -7,17 +7,17 @@ from mock import MockRestView
 
 class MockRestViewAllImpl(MockRestView):
     def handle_get(self):
-        return 'GET called'
+        return {'msg': 'GET called'}
     def handle_post(self):
-        return 'POST called'
+        return {'msg': 'POST called'}
     def handle_put(self):
-        return 'PUT called'
+        return {'msg': 'PUT called'}
     def handle_delete(self):
-        return 'DELETE called'
+        return {'msg': 'DELETE called'}
     def handle_options(self):
-        return 'OPTIONS called'
+        return {'msg': 'OPTIONS called'}
     def handle_head(self):
-        return 'HEAD called'
+        return {'msg': 'HEAD called'}
 
 
 class TestRestFramework(TestCase):
@@ -30,12 +30,12 @@ class TestRestFramework(TestCase):
             self.assertEquals(responsedata, {'error': errormsg})
 
     def test_handle_override(self):
-        self.assertEquals(MockRestViewAllImpl(request=MockRequest('GET')).handle(), 'GET called')
-        self.assertEquals(MockRestViewAllImpl(request=MockRequest('POST')).handle(), 'POST called')
-        self.assertEquals(MockRestViewAllImpl(request=MockRequest('PUT')).handle(), 'PUT called')
-        self.assertEquals(MockRestViewAllImpl(request=MockRequest('DELETE')).handle(), 'DELETE called')
-        self.assertEquals(MockRestViewAllImpl(request=MockRequest('OPTIONS')).handle(), 'OPTIONS called')
-        self.assertEquals(MockRestViewAllImpl(request=MockRequest('HEAD')).handle(), 'HEAD called')
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('GET')).handle(), {'msg': 'GET called'})
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('POST')).handle(), {'msg': 'POST called'})
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('PUT')).handle(), {'msg': 'PUT called'})
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('DELETE')).handle(), {'msg': 'DELETE called'})
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('OPTIONS')).handle(), {'msg': 'OPTIONS called'})
+        self.assertEquals(MockRestViewAllImpl(request=MockRequest('HEAD')).handle(), {'msg': 'HEAD called'})
 
     def test_get_requestdata(self):
         pydata = {'hello': 'world'}
@@ -66,6 +66,22 @@ class TestRestFramework(TestCase):
         self.assertEquals(view.response_405_method_not_allowed(),
                           {'error': 'Method Not Allowed: GET'})
         self.assertEquals(view.response.status, (405, 'Method Not Allowed: GET'))
+
+    def test_get_yaml(self):
+        import yaml
+        class View(MockRestView):
+            def handle_get(self):
+                data = self.get_requestdata()
+                return data
+        yamldata = """---
+- a
+- - b.1
+  - b.2
+- c
+"""
+        result = View(request=MockRequest('GET', yamldata, getdata={'format': 'application/yaml'})).render()
+        outdata = yaml.safe_load(result)
+        self.assertEquals(outdata, ['a', ['b.1', 'b.2'], 'c'])
 
 
 
