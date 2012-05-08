@@ -63,7 +63,7 @@
                         <tbody>
                             {% for contenttype in content_types %}
                             <tr>
-                                <td>{{ contenttype }}</td>
+                                <td>{{ contenttype.mimetype }}</td>
                                 <td style="width:130px;">
                                     <a href="?mimetype={{ contenttype.mimetype }}">view</a> |
                                     <a href="?mimetype={{ contenttype.mimetype }}&downloadfile=true">download</a>

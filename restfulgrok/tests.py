@@ -4,7 +4,9 @@ from unittest import TestCase
 from mock import MockRequest
 from mock import MockRestView
 from mock import MockRestViewWithFancyHtml
-from view import JsonContentType, YamlContentType
+from contenttype import JsonContentType
+from contenttype import YamlContentType
+from contenttype import ContentTypesRegistry
 
 
 class MockRestViewAllImpl(MockRestView):
@@ -100,6 +102,27 @@ class TestGrokRestViewWithFancyHtmlMixin(TestCase):
                 return {'hello': 'world'}
         output = View(request=MockRequest('GET', getdata={'mimetype': 'text/html'})).render()
         self.assertTrue('?mimetype=text/html' in output)
+
+
+class TestContentTypesRegistry(TestCase):
+    def test_negotiate_accept_header(self):
+        registry = ContentTypesRegistry(JsonContentType, YamlContentType)
+        self.assertEquals(registry.negotiate_accept_header('application/yaml,application/json'),
+                          'application/yaml')
+        self.assertEquals(registry.negotiate_accept_header('application/json,application/yaml'),
+                          'application/json')
+        self.assertEquals(registry.negotiate_accept_header('application/yaml;q=0.8,application/json'),
+                          'application/json')
+        self.assertEquals(registry.negotiate_accept_header('application/yaml;q=1.0,application/json;q=0.8'),
+                          'application/yaml')
+
+        # Should match application/json since it was added to
+        # ContentTypesRegistry first (they both match "*/*)
+        self.assertEquals(registry.negotiate_accept_header('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'),
+                          'application/json')
+
+        self.assertEquals(registry.negotiate_accept_header('application/html'),
+                          None)
 
 
 from example_tests import TestExampleRestMixin

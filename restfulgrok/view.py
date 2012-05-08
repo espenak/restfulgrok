@@ -41,10 +41,14 @@ class GrokRestViewMixin(object):
         """
         if hasattr(self, '_content_type'):
             return self._content_type
-        getmimetype = self.request.get('mimetype')
-        if getmimetype and getmimetype in self.content_types:
-            mimetype = getmimetype
-        else:
+        mimetype = None
+        querystring_mimetype = self.request.get('mimetype')
+        acceptheader = self.request.getHeader('Accept')
+        if querystring_mimetype and querystring_mimetype in self.content_types:
+            mimetype = querystring_mimetype
+        elif acceptheader:
+            mimetype = self.content_types.negotiate_accept_header(acceptheader)
+        if not mimetype:
             raise CouldNotDetermineContentType()
         content_type = self.content_types[mimetype]
         self._content_type = content_type

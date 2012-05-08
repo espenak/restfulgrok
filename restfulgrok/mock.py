@@ -15,15 +15,21 @@ class MockResponse(object):
 
 
 class MockRequest(object):
-    def __init__(self, method='GET', body='', getdata={}):
+    def __init__(self, method='GET', body='', getdata={},
+                 headers={'Accept': 'application/json'}):
         self.method = method
         self.body = body
-        self.getdata = {'BODY': self.body,
-                        'mimetype': 'application/json'}
+        self.getdata = {'BODY': self.body}
         self.getdata.update(getdata)
+        self.headers = {}
+        for header, value in headers.iteritems():
+            self.headers[header.lower()] = value
 
     def get(self, key, default=None):
         return self.getdata.get(key, default)
+
+    def getHeader(self, header):
+        return self.headers[header.lower()]
 
 
 class MockContext(object):

@@ -153,3 +153,22 @@ class ContentTypesRegistry(object):
         Iterate over all the :class:`ContentType`s in the registry.
         """
         return self._registry.itervalues()
+
+    def negotiate_accept_header(self, acceptheader):
+        """
+        Parse the HTTP accept header and find any acceptable mimetypes from the
+        registry.
+
+        :return: An acceptable mimetype, or ``None`` if no acceptable mimetype is found.
+        :rtype: str
+        """
+        import negotiator
+        acceptable = []
+        for content_type in self._registry.itervalues():
+            acceptable.append(negotiator.AcceptParameters(negotiator.ContentType(content_type.mimetype)))
+        cn = negotiator.ContentNegotiator(acceptable=acceptable)
+        result = cn.negotiate(acceptheader)
+        if result:
+            return result.content_type.mimetype()
+        else:
+            return None
