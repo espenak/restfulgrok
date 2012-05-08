@@ -14,7 +14,12 @@
             table {
                 font-size: 13px;
             }
+
+            .page-header h1 {
+                padding-top: 45px;
+            }
         </style>
+        {% block head_extra %}{% endblock %}
     </head>
 
     <body>
@@ -88,7 +93,7 @@
                     <div class="page-header">
                         <h1 id="data">Data <small>Encoded as application/json</small></h1>
                     </div>
-                    <pre>{{ jsondata }}</pre>
+                    <pre>{{ jsondata|e }}</pre>
 
                 </div>
                 {% block post_data %}{% endblock %}
