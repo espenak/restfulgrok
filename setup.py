@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
+from restfulgrok.version import version
 
 
 setup(name = 'restfulgrok',
       description = 'RESTful interface for grok (and five.grok).',
-      version = '1.0',
+      version = version,
       license='BSD',
       url = 'https://github.com/espenak/restfulgrok',
       author = 'Espen Angell Kristiansen',
