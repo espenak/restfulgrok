@@ -4,7 +4,7 @@
         <title>{{ title }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
-{{ css }}
+{{ bootstrap }}
         </style>
         <style type="text/css">
             body {
@@ -20,83 +20,90 @@
                 padding-top: 45px;
             }
         </style>
+        <style type="text/css">
+{{ bootstrap_responsive }}
+        </style>
         {% block head_extra %}{% endblock %}
     </head>
 
     <body>
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href="#">{{ brandingtitle }}</a>
-                    <div class="nav-collapse">
-                        <ul class="nav">
-                            {% block nav_pre_content_types %}{% endblock %}
-                            <li><a href="#contenttypes">Content types</a></li>
-                            {% block nav_pre_data %}{% endblock %}
-                            <li><a href="#data">Data</a></li>
-                            {% block nav_post_data %}{% endblock %}
-                        </ul>
-                    </div>
+                <div class="container-fluid">
+                    {% block navbarcontainer %}
+                        <a class="brand" href="#">{{ brandingtitle }}</a>
+
+                        <div class="nav-collapse">
+                            <ul class="nav">
+                                <li><a href="#contenttypes">Content types</a></li>
+                                <li><a href="#data">Data</a></li>
+                            </ul>
+                        </div>
+                    {% endblock %}
                 </div>
             </div>
         </div>
 
-        <div class="container">
+        <div class="container-fluid">
+            <div class="row-fluid">
 
-            <!-- Main hero unit for a primary marketing message or call to action -->
-            <div class="hero-unit">
-                <h1>{{ heading }}</h1>
-                <p>
-                {% block herotext %}
-                    This is the <em>text/html</em> content-type view for this RESTful API.
-                {% endblock %}
-                </p>
-                <p>
-                    {% block herobuttons %}
-                    <a class="btn btn-primary btn-large" href="#contenttypes" href="">Content types &raquo;</a>
-                    <a class="btn btn-large" href="#data">Data &raquo;</a>
-                    {% endblock %}
-                </p>
-            </div>
-
-            <div class="row">
-                {% block pre_content_types %}{% endblock %}
                 <div class="span12">
-                    <div class="page-header">
-                        <h1 id="contenttypes">Supported content-types</h1>
+                    <div class="hero-unit">
+                        <h1>{{ heading }}</h1>
+                        <p>
+                        {% block herotext %}
+                            This is the <em>text/html</em> content-type view for this RESTful API.
+                        {% endblock %}
+                        </p>
+                        <p>
+                            {% block herobuttons %}
+                            <a class="btn btn-primary btn-large" href="#contenttypes" href="">Content types &raquo;</a>
+                            <a class="btn btn-large" href="#data">Data &raquo;</a>
+                            {% endblock %}
+                        </p>
                     </div>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Content type</th>
-                                <th>View or download</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for contenttype in content_types %}
-                            <tr>
-                                <td>{{ contenttype.mimetype }}</td>
-                                <td style="width:130px;">
-                                    <a href="?mimetype={{ contenttype.mimetype }}">view</a> |
-                                    <a href="?mimetype={{ contenttype.mimetype }}&downloadfile=true">download</a>
-                                </td>
-                                <td>
-                                    {{ contenttype.description }}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                </div>
+
+                {% block pre_content_types %}{% endblock %}
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="page-header">
+                            <h1 id="contenttypes">Supported content-types</h1>
+                        </div>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Content type</th>
+                                    <th>View or download</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contenttype in content_types %}
+                                <tr>
+                                    <td>{{ contenttype.mimetype }}</td>
+                                    <td style="width:130px;">
+                                        <a href="?mimetype={{ contenttype.mimetype }}">view</a> |
+                                        <a href="?mimetype={{ contenttype.mimetype }}&downloadfile=true">download</a>
+                                    </td>
+                                    <td>
+                                        {{ contenttype.description }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </span>
                 </div>
 
                 {% block pre_data %}{% endblock %}
-                <div class="span12">
-                    <div class="page-header">
-                        <h1 id="data">Data <small>Encoded as application/json</small></h1>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="page-header">
+                            <h1 id="data">Data <small>Encoded as application/json</small></h1>
+                        </div>
+                        <pre>{{ jsondata|e }}</pre>
                     </div>
-                    <pre>{{ jsondata|e }}</pre>
-
                 </div>
                 {% block post_data %}{% endblock %}
             </div>

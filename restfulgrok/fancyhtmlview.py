@@ -24,8 +24,11 @@ class HtmlContentType(ContentType):
     #: The :func:`pkg_resources.resource_string` args for the template file.
     template_path = (__name__, 'fancyhtmltemplate.jinja.html')
 
-    #: The :func:`pkg_resources.resource_string` args for the css file.
-    css_path = (__name__, 'bootstrap.min.css')
+    #: The :func:`pkg_resources.resource_string` args for the bootstrap css file.
+    bootstrap_path = (__name__, 'bootstrap.min.css')
+
+    #: The :func:`pkg_resources.resource_string` args for the bootstrap css file.
+    bootstrap_responsive_path = (__name__, 'bootstrap-responsive.min.css')
 
     #: Variable forwarded to the template as ``title``.
     html_title = 'REST API'
@@ -63,11 +66,18 @@ class HtmlContentType(ContentType):
         return cls.get_cached_file('cache_template_source', cls.template_path)
 
     @classmethod
-    def get_css_source(cls):
+    def get_bootstrap_source(cls):
         """
-        Use :meth:`.get_cached_file` to get :obj:`.css_path`.
+        Use :meth:`.get_cached_file` to get :obj:`.bootstrap_path`.
         """
-        return cls.get_cached_file('cache_css_source', cls.css_path)
+        return cls.get_cached_file('cache_bootstrap_source', cls.bootstrap_path)
+
+    @classmethod
+    def get_bootstrap_responsive_source(cls):
+        """
+        Use :meth:`.get_cached_file` to get :obj:`.bootstrap_responsive_path`.
+        """
+        return cls.get_cached_file('cache_bootstrap_responsive_source', cls.bootstrap_responsive_path)
 
     @classmethod
     def get_template_data(cls, pydata, view):
@@ -79,7 +89,8 @@ class HtmlContentType(ContentType):
         """
         jsondata = JsonContentType.dumps(pydata)
         return dict(jsondata=jsondata,
-                    css=cls.get_css_source(),
+                    bootstrap=cls.get_bootstrap_source(),
+                    bootstrap_responsive=cls.get_bootstrap_responsive_source(),
                     content_types=view.content_types,
                     title=cls.html_title,
                     brandingtitle=cls.html_brandingtitle,
