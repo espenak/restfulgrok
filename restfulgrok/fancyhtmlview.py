@@ -19,7 +19,7 @@ class HtmlContentType(ContentType):
 
     #: If ``True``, reload template on each request. If ``False``, cache the
     #: template data in the class after first read.
-    template_debug = False
+    template_debug = True
 
     #: The :func:`pkg_resources.resource_string` args for the template file.
     template_path = (__name__, 'fancyhtmltemplate.jinja.html')
@@ -27,8 +27,14 @@ class HtmlContentType(ContentType):
     #: The :func:`pkg_resources.resource_string` args for the css file.
     css_path = (__name__, 'bootstrap.min.css')
 
-    #: Variable forwarded to the template as ``pagetitle``.
-    html_pagetitle = 'REST API'
+    #: Variable forwarded to the template as ``title``.
+    html_title = 'REST API'
+
+    #: Variable forwarded to the template as ``brandingtitle``.
+    html_brandingtitle = html_title
+
+    #: Variable forwarded to the template as ``heading``.
+    html_heading = html_title
 
     @classmethod
     def get_cached_file(cls, cacheattr, resource_string_path):
@@ -75,7 +81,9 @@ class HtmlContentType(ContentType):
         return dict(jsondata=jsondata,
                     css=cls.get_css_source(),
                     content_types=view.content_types,
-                    pagetitle = cls.html_pagetitle)
+                    title=cls.html_title,
+                    brandingtitle=cls.html_brandingtitle,
+                    heading=cls.html_heading)
 
     @classmethod
     def dumps(cls, pydata, view):

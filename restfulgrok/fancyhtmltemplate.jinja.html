@@ -1,7 +1,8 @@
 {# vim: set ft=jinja: #}
 <html>
     <head>
-        <title>{{ pagetitle }}</title>
+        <title>{{ title }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
 {{ css }}
         </style>
@@ -12,7 +13,7 @@
             }
 
             table {
-                font-size: 13px;
+                font-size: 13px;/* For some reason the bootstrap CSS does not correctly reset the table font. */
             }
 
             .page-header h1 {
@@ -26,7 +27,7 @@
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="brand" href="#">{{ pagetitle }}</a>
+                    <a class="brand" href="#">{{ brandingtitle }}</a>
                     <div class="nav-collapse">
                         <ul class="nav">
                             {% block nav_pre_content_types %}{% endblock %}
@@ -44,7 +45,7 @@
 
             <!-- Main hero unit for a primary marketing message or call to action -->
             <div class="hero-unit">
-                <h1>{{ pagetitle }}</h1>
+                <h1>{{ heading }}</h1>
                 <p>
                 {% block herotext %}
                     This is the <em>text/html</em> content-type view for this RESTful API.
