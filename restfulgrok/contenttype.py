@@ -73,7 +73,7 @@ class YamlContentType(ContentType):
     """
     YAML content type. Implements both loads and dumps.
     """
-    mimetype = 'application/yaml'
+    mimetype = 'application/x-yaml'
     extension = 'yaml'
     description = yaml_description
 

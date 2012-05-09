@@ -61,7 +61,7 @@ class TestGrokRestViewMixin(TestCase):
     def test_get_content_type(self):
         self.assertEquals(MockRestView(request=MockRequest('GET', getdata={'mimetype': 'application/json'})).get_content_type(),
                           JsonContentType)
-        self.assertEquals(MockRestView(request=MockRequest('GET', getdata={'mimetype': 'application/yaml'})).get_content_type(),
+        self.assertEquals(MockRestView(request=MockRequest('GET', getdata={'mimetype': 'application/x-yaml'})).get_content_type(),
                           YamlContentType)
 
     def test_response_400_bad_request(self):
@@ -89,7 +89,7 @@ class TestGrokRestViewMixin(TestCase):
   - b.2
 - c
 """
-        result = View(request=MockRequest('GET', yamldata, getdata={'mimetype': 'application/yaml'})).render()
+        result = View(request=MockRequest('GET', yamldata, getdata={'mimetype': 'application/x-yaml'})).render()
         outdata = yaml.safe_load(result)
         self.assertEquals(outdata, ['a', ['b.1', 'b.2'], 'c'])
 
@@ -107,19 +107,18 @@ class TestGrokRestViewWithFancyHtmlMixin(TestCase):
 class TestContentTypesRegistry(TestCase):
     def test_negotiate_accept_header(self):
         registry = ContentTypesRegistry(JsonContentType, YamlContentType)
-        self.assertEquals(registry.negotiate_accept_header('application/yaml,application/json'),
-                          'application/yaml')
-        self.assertEquals(registry.negotiate_accept_header('application/json,application/yaml'),
+        self.assertEquals(registry.negotiate_accept_header('application/x-yaml,application/json'),
+                          'application/x-yaml')
+        self.assertEquals(registry.negotiate_accept_header('application/json,application/x-yaml'),
                           'application/json')
-        self.assertEquals(registry.negotiate_accept_header('application/yaml;q=0.8,application/json'),
+        self.assertEquals(registry.negotiate_accept_header('application/x-yaml;q=0.8,application/json'),
                           'application/json')
-        self.assertEquals(registry.negotiate_accept_header('application/yaml;q=1.0,application/json;q=0.8'),
-                          'application/yaml')
+        self.assertEquals(registry.negotiate_accept_header('application/x-yaml;q=1.0,application/json;q=0.8'),
+                          'application/x-yaml')
 
-        # Should match application/json since it was added to
-        # ContentTypesRegistry first (they both match "*/*)
-        self.assertEquals(registry.negotiate_accept_header('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'),
-                          'application/json')
+        # Should match yaml or json (they both match "*/*)
+        self.assertTrue(registry.negotiate_accept_header('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+                        in ('application/json', 'application/x-yaml'))
 
         self.assertEquals(registry.negotiate_accept_header('application/html'),
                           None)
