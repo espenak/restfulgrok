@@ -39,6 +39,9 @@ class HtmlContentType(ContentType):
     #: Variable forwarded to the template as ``heading``.
     html_heading = html_title
 
+    #: Max number of items to show in the data-preview, if the pydata is a list
+    datalist_maxitems = 5
+
     @classmethod
     def get_cached_file(cls, cacheattr, resource_string_path):
         """
@@ -87,7 +90,19 @@ class HtmlContentType(ContentType):
         :return: Template data.
         :rtype: dict
         """
-        jsondata = JsonContentType.dumps(pydata)
+        def to_json(data):
+            return JsonContentType.dumps(data)
+
+        if isinstance(pydata, list) and len(pydata) > cls.datalist_maxitems:
+            pydatalen = len(pydata)
+            pydata = pydata[:cls.datalist_maxitems]
+            jsondata = to_json(pydata)
+            jsondata = jsondata.strip().rstrip(']')
+            jsondata += ('\n  // ... only showing the first {0}. There are {1} '
+                         'in total.\n]').format(cls.datalist_maxitems,
+                                                pydatalen)
+        else:
+            jsondata = to_json(pydata)
         return dict(jsondata=jsondata,
                     bootstrap=cls.get_bootstrap_source(),
                     bootstrap_responsive=cls.get_bootstrap_responsive_source(),
