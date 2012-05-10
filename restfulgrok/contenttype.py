@@ -20,7 +20,7 @@ class ContentType(object):
         raise Exception('You can not create instances of ContentType subclasses.')
 
     @classmethod
-    def dumps(self, pydata, view):
+    def dumps(cls, pydata, view):
         """
         Dump ``pydata`` to a string and return the string.
 
@@ -30,7 +30,7 @@ class ContentType(object):
         return pydata
 
     @classmethod
-    def loads(self, rawdata, view):
+    def loads(cls, rawdata, view):
         """
         Load the ``rawdata`` bytestring and return it as a decoded pyton object.
 
@@ -62,11 +62,11 @@ class JsonContentType(ContentType):
     description = json_description
 
     @classmethod
-    def dumps(self, pydata, view=None):
+    def dumps(cls, pydata, view=None):
         return json.dumps(pydata, indent=2)
 
     @classmethod
-    def loads(self, rawdata, view=None):
+    def loads(cls, rawdata, view=None):
         return json.loads(rawdata)
 
 class YamlContentType(ContentType):
@@ -78,14 +78,14 @@ class YamlContentType(ContentType):
     description = yaml_description
 
     @classmethod
-    def dumps(self, pydata, view=None):
+    def dumps(cls, pydata, view=None):
         try:
             return yaml.safe_dump(pydata, default_flow_style=False)
         except yaml.YAMLError, e:
             raise ValueError(str(e))
 
     @classmethod
-    def loads(self, rawdata, view=None):
+    def loads(cls, rawdata, view=None):
         try:
             return yaml.safe_load(rawdata)
         except yaml.YAMLError, e:
