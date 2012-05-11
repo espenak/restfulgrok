@@ -1,4 +1,4 @@
-from jinja2 import Template
+from jinja2 import Environment, PackageLoader
 from pkg_resources import resource_string
 
 from view import GrokRestViewMixin
@@ -21,9 +21,6 @@ class HtmlContentType(ContentType):
     #: template data in the class after first read.
     template_debug = True
 
-    #: The :func:`pkg_resources.resource_string` args for the template file.
-    template_path = (__name__, 'fancyhtmltemplate.jinja.html')
-
     #: The :func:`pkg_resources.resource_string` args for the bootstrap css file.
     bootstrap_path = (__name__, 'bootstrap.min.css')
 
@@ -42,6 +39,12 @@ class HtmlContentType(ContentType):
     #: Max number of items to show in the data-preview, if the pydata is a list
     datalist_maxitems = 5
 
+    #: jinja2 template name
+    template_name = 'fancyhtmlview.jinja.html'
+
+    #: The ``jinja2.Environment``
+    template_environment = Environment(loader=PackageLoader('restfulgrok', 'templates'))
+
     @classmethod
     def get_cached_file(cls, cacheattr, resource_string_path):
         """
@@ -59,14 +62,6 @@ class HtmlContentType(ContentType):
                 source = resource_string(*resource_string_path)
                 setattr(cls, cacheattr, source)
             return getattr(cls, cacheattr)
-
-
-    @classmethod
-    def get_template_source(cls):
-        """
-        Use :meth:`.get_cached_file` to get :obj:`.template_path`.
-        """
-        return cls.get_cached_file('cache_template_source', cls.template_path)
 
     @classmethod
     def get_bootstrap_source(cls):
@@ -113,7 +108,7 @@ class HtmlContentType(ContentType):
 
     @classmethod
     def dumps(cls, pydata, view):
-        template = Template(cls.get_template_source())
+        template = cls.template_environment.get_template(cls.template_name)
         return template.render(**cls.get_template_data(pydata, view)).encode('utf-8')
 
 

@@ -1,3 +1,4 @@
 include README.rst
 include restfulgrok/fancyhtmltemplate.jinja
 include restfulgrok/bootstrap.min.css
+include restfulgrok/templates/*
