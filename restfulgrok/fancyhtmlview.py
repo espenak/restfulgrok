@@ -1,5 +1,4 @@
 from jinja2 import Environment, PackageLoader
-from pkg_resources import resource_string
 
 from view import GrokRestViewMixin
 from contenttype import ContentType, ContentTypesRegistry
@@ -16,16 +15,6 @@ class HtmlContentType(ContentType):
     mimetype = 'text/html'
     extension = 'html'
     description = 'Formatted HTML view with help for the REST API.'
-
-    #: If ``True``, reload template on each request. If ``False``, cache the
-    #: template data in the class after first read.
-    template_debug = True
-
-    #: The :func:`pkg_resources.resource_string` args for the bootstrap css file.
-    bootstrap_path = (__name__, 'bootstrap.min.css')
-
-    #: The :func:`pkg_resources.resource_string` args for the bootstrap css file.
-    bootstrap_responsive_path = (__name__, 'bootstrap-responsive.min.css')
 
     #: Variable forwarded to the template as ``title``.
     html_title = 'REST API'
@@ -44,38 +33,6 @@ class HtmlContentType(ContentType):
 
     #: The ``jinja2.Environment``
     template_environment = Environment(loader=PackageLoader('restfulgrok', 'templates'))
-
-    @classmethod
-    def get_cached_file(cls, cacheattr, resource_string_path):
-        """
-        Get file contents using :func:`pkg_resources.resource_string`. If
-        :obj:`.template_debug` is ``False``, cache the data in the
-        class attribute ``cacheattr`` and use the cache on subsequent calls.
-
-        :param cacheattr: Attribute to use a cache of the file contents.
-        :param resource_string: :func:`pkg_resources.resource_string` path to the file.
-        """
-        if cls.template_debug:
-            return resource_string(*resource_string_path)
-        else:
-            if not hasattr(cls, cacheattr):
-                source = resource_string(*resource_string_path)
-                setattr(cls, cacheattr, source)
-            return getattr(cls, cacheattr)
-
-    @classmethod
-    def get_bootstrap_source(cls):
-        """
-        Use :meth:`.get_cached_file` to get :obj:`.bootstrap_path`.
-        """
-        return cls.get_cached_file('cache_bootstrap_source', cls.bootstrap_path)
-
-    @classmethod
-    def get_bootstrap_responsive_source(cls):
-        """
-        Use :meth:`.get_cached_file` to get :obj:`.bootstrap_responsive_path`.
-        """
-        return cls.get_cached_file('cache_bootstrap_responsive_source', cls.bootstrap_responsive_path)
 
     @classmethod
     def get_template_data(cls, pydata, view):
@@ -99,8 +56,6 @@ class HtmlContentType(ContentType):
         else:
             jsondata = to_json(pydata)
         return dict(jsondata=jsondata,
-                    bootstrap=cls.get_bootstrap_source(),
-                    bootstrap_responsive=cls.get_bootstrap_responsive_source(),
                     content_types=view.content_types,
                     title=cls.html_title,
                     brandingtitle=cls.html_brandingtitle,

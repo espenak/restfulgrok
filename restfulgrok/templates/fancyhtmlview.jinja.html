@@ -2,26 +2,6 @@
     <head>
         <title>{{ title }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style type="text/css">
-{{ bootstrap }}
-        </style>
-        <style type="text/css">
-            body {
-                padding-top: 60px;
-                padding-bottom: 40px;
-            }
-
-            table {
-                font-size: 13px;/* For some reason the bootstrap CSS does not correctly reset the table font. */
-            }
-
-            .page-header h1 {
-                padding-top: 45px;
-            }
-        </style>
-        <style type="text/css">
-{{ bootstrap_responsive }}
-        </style>
         {% block head_extra %}{% endblock %}
     </head>
 

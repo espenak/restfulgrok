@@ -46,6 +46,42 @@ And finally use the mixin to create a ``grok.View``::
         grok.name('rest')
 
 
+Extending and styling the HtmlContentType view
+==============================================
+The html provided with :class:`restfulgrok.fancyhtmlview.HtmlContentType` does
+not have a stylesheet, however it is designed to work with `Bootstrap
+<http://twitter.github.com/bootstrap/>`_. Just override the template,
+and override the ``head_extra`` block. For example:
+
+1. Create your own html content type (example assumes your app is ``my.package``)::
+
+    from jinja2 import Environment, PrefixLoader, PackageLoader
+    class MyHtmlContentType(HtmlContentType):
+        template_name = 'fancyhtmlview.jinja.html'
+        template_environment = Environment(loader = PrefixLoader({
+            'restfulgrok': PackageLoader('restfulgrok'),
+            'mypackage': PackageLoader('my.package')
+        }))
+
+2. Create ``my/package/templates`` and ``my/package/staticfiles``.
+3. Add static directory to ``configure.zcml``::
+
+    <browser:resourceDirectory
+        name="my.package"
+        directory="staticfiles"
+        />
+
+4. Create your own template, ``my/package/templates/view.jinja.html``,
+   extending the one from ``restfulgrok``::
+
+    {% extends "restfulgrok/fancyhtmlview.jinja.html" %}
+    {% block head_extra %}
+        <link rel="stylesheet/less" href="++resource++my.package/bootstrap/less/bootstrap.less">
+        <script src="++resource++my.package/less-1.3.0.min.js"></script>
+    {% endblock %}
+
+
+
 Documentation
 =============
 
