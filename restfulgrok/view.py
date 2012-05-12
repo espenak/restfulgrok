@@ -81,6 +81,7 @@ class GrokRestViewMixin(object):
         """
         self.set_contenttype_header()
         self.add_attachment_header()
+        self.response.setStatus(200, 'OK')
         if self.get_requestmethod() in self.supported_methods:
             return getattr(self, 'handle_' + self.get_requestmethod())()
         else:

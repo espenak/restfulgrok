@@ -5,7 +5,7 @@
         {% block head_extra %}{% endblock %}
     </head>
 
-    <body data-spy="scroll">
+    <body {%block body_extraargs %}{% endblock %}>
         <div id="navbar" class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
@@ -82,7 +82,7 @@
                         <div class="page-header">
                             <h1 id="data">Data preview <small>Encoded as application/json</small></h1>
                         </div>
-                        <pre>{{ jsondata|e }}</pre>
+                        <pre class="{% block datapre_classes %}{% endblock %}">{{ jsondata|e }}</pre>
                     </div>
                 </div>
                 {% block post_data %}{% endblock %}
