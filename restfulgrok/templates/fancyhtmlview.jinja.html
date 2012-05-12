@@ -24,8 +24,9 @@
         </div>
 
         <div class="container-fluid">
-            {% block fluidcontainer_first %}{% endblock %}
+            {% block fluidcontainer_start %}{% endblock %}
 
+            {% block herounit %}
             <div class="row-fluid">
                 <div class="span12">
                     <div class="hero-unit">
@@ -43,7 +44,11 @@
                         </p>
                     </div>
                 </div>
+            </div>
+            {% endblock %}
 
+            {% block contenttypes %}
+            <div class="row-fluid">
                 {% block pre_content_types %}{% endblock %}
                 <div class="row-fluid">
                     <div class="span12">
@@ -75,18 +80,20 @@
                         </table>
                     </span>
                 </div>
-
-                {% block pre_data %}{% endblock %}
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="page-header">
-                            <h1 id="data">Data preview <small>Encoded as application/json</small></h1>
-                        </div>
-                        <pre class="{% block datapre_classes %}{% endblock %}">{{ jsondata|e }}</pre>
-                    </div>
-                </div>
-                {% block post_data %}{% endblock %}
             </div>
+            {% endblock %}
+
+            {% block data %}
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="page-header">
+                        <h1 id="data">{% block data_heading %}Data preview <small>Encoded as application/json</small>{% endblock %}</h1>
+                    </div>
+                    {% block data_intro %}{% endblock %}
+                    <pre class="{% block datapre_classes %}{% endblock %}">{{ previewdata|e }}</pre>
+                </div>
+            </div>
+            {% endblock %}
         </div>
 
         <!-- Javascript.

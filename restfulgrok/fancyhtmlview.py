@@ -25,14 +25,20 @@ class HtmlContentType(ContentType):
     #: Variable forwarded to the template as ``heading``.
     html_heading = html_title
 
-    #: Max number of items to show in the data-preview, if the pydata is a list
-    datalist_maxitems = 5
-
     #: jinja2 template name
     template_name = 'fancyhtmlview.jinja.html'
 
     #: The ``jinja2.Environment``
     template_environment = Environment(loader=PackageLoader('restfulgrok', 'templates'))
+
+    @classmethod
+    def get_previewdata(cls, pydata):
+        """
+        Get the data that should be added to the data preview box.
+
+        :return: A string containing the data.
+        """
+        return JsonContentType.dumps(pydata)
 
     @classmethod
     def get_template_data(cls, pydata, view):
@@ -42,20 +48,7 @@ class HtmlContentType(ContentType):
         :return: Template data.
         :rtype: dict
         """
-        def to_json(data):
-            return JsonContentType.dumps(data)
-
-        if isinstance(pydata, list) and len(pydata) > cls.datalist_maxitems:
-            pydatalen = len(pydata)
-            pydata = pydata[:cls.datalist_maxitems]
-            jsondata = to_json(pydata)
-            jsondata = jsondata.strip().rstrip(']')
-            jsondata += ('\n  // ... only showing the first {0}. There are {1} '
-                         'in total.\n]').format(cls.datalist_maxitems,
-                                                pydatalen)
-        else:
-            jsondata = to_json(pydata)
-        return dict(jsondata=jsondata,
+        return dict(previewdata=cls.get_previewdata(pydata),
                     content_types=view.content_types,
                     title=cls.html_title,
                     brandingtitle=cls.html_brandingtitle,
