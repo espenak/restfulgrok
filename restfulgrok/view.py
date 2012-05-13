@@ -180,7 +180,7 @@ class GrokRestViewMixin(object):
         """
         Run ``self.response.setStatus(201, 'Created')`` and return body.
         """
-        return self.create_response('201', 'Created', body)
+        return self.create_response(201, 'Created', body)
 
     def get_requestdata(self):
         """
