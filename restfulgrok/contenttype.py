@@ -154,6 +154,9 @@ class ContentTypesRegistry(object):
         """
         return self._registry.itervalues()
 
+    def get_mimetypelist(self):
+        return self._registry.keys()
+
     def negotiate_accept_header(self, acceptheader):
         """
         Parse the HTTP accept header and find any acceptable mimetypes from the
