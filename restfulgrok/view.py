@@ -25,6 +25,33 @@ class GrokRestViewMixin(object):
     #: A :class:`ContentTypesRegistry` object containing all content-types supported by the API.
     content_types = ContentTypesRegistry(JsonContentType, YamlContentType)
 
+
+    #: Map of request method to permission.
+    #: You should have one (lowercase) key for each request method in
+    #: :obj:`.supported_methods`, or a "default" key defining a default
+    #: permission.
+    permissions = {'get': 'zope2.View',
+                   'default': 'cmf.ModifyPortalContent'}
+
+
+    def authorize(self):
+        """
+        Called by :meth:`.render` to authorize the user before calling :meth:`.handle`.
+
+        The permissions required for each method is defined in :obj:`permissions`.
+
+        :raise AccessControl.Unauthorized:
+            If the current user do not have
+            permission to perform the requested method.
+        """
+        from AccessControl import Unauthorized, getSecurityManager
+        method = self.get_requestmethod()
+        permission = self.permissions.get(method, self.permissions['default'])
+        if not getSecurityManager().checkPermission(permission, self):
+            raise Unauthorized('Not authorized for: {0} requests. '
+                               'Required permission: {1}'.format(method.upper(),
+                                                                 permission))
+
     def render(self):
         """
         Called to render the view. Uses :meth:`handle` to handle all the logic
@@ -33,9 +60,10 @@ class GrokRestViewMixin(object):
         """
         from AccessControl.unauthorized import Unauthorized
         try:
+            self.authorize()
             responsedata = self.handle()
-        except Unauthorized:
-            return self.response_401_unauthorized()
+        except Unauthorized, e:
+            return self.response_401_unauthorized(str(e))
         return self.encode_output_data(responsedata)
 
     def get_content_type(self):
@@ -76,8 +104,9 @@ class GrokRestViewMixin(object):
     def handle(self):
         """
         Takes care of all the logic for :meth:`render`, except that it does not
-        :meth:`encode_output_data` the response data. This makes this method very suitable for
-        use in tests or custom render() implementations.
+        :meth:`encode_output_data` the response data, and it does not do
+        authorization. This makes this method very suitable for use in tests or
+        custom render() implementations.
         """
         self.set_contenttype_header()
         self.add_attachment_header()
@@ -114,11 +143,11 @@ class GrokRestViewMixin(object):
         """
         return self.create_response(400, 'Bad Request', body)
 
-    def response_401_unauthorized(self):
+    def response_401_unauthorized(self, error='Unauthorized'):
         """
         Respond with 401 Unauthorized, and ``{'error': 'Unauthorized'}`` as body.
         """
-        return self.create_response(401, 'Unauthorized', {'error': 'Unauthorized'})
+        return self.create_response(401, 'Unauthorized', {'error': error})
 
     def response_201_created(self, body):
         """
