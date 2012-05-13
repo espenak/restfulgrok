@@ -1,0 +1,8 @@
+<h1>{{ statuscode }} {{ statusmessage }}</h1>
+{% if errordata %}
+<pre>{{ errordata }}</pre>
+{% else %}
+<p>
+An error occurred
+</p>
+{% endif %}

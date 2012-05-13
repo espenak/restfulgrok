@@ -1,4 +1,5 @@
-from jinja2 import Environment, PackageLoader
+import json
+from jinja2 import Environment, PrefixLoader, PackageLoader
 
 from view import GrokRestViewMixin
 from contenttype import ContentType, ContentTypesRegistry
@@ -26,10 +27,16 @@ class HtmlContentType(ContentType):
     html_heading = html_title
 
     #: jinja2 template name
-    template_name = 'fancyhtmlview.jinja.html'
+    error_template_name = 'restfulgrok/errorview.jinja.html'
+
+    #: jinja2 template name for the :meth:`.errorview`.
+    template_name = 'restfulgrok/fancyhtmlview.jinja.html'
 
     #: The ``jinja2.Environment``
-    template_environment = Environment(loader=PackageLoader('restfulgrok', 'templates'))
+    template_environment = Environment(loader = PrefixLoader({
+        'restfulgrok': PackageLoader('restfulgrok')
+    }))
+
 
     @classmethod
     def get_previewdata(cls, pydata):
@@ -55,9 +62,23 @@ class HtmlContentType(ContentType):
                     heading=cls.html_heading)
 
     @classmethod
+    def errorview(cls, errordata, view):
+        template = cls.template_environment.get_template(cls.error_template_name)
+        try:
+            errordata = json.dumps(errordata)
+        except TypeError:
+            errordata = None
+        return template.render(errordata=errordata,
+                               statuscode=view.response.getStatus(),
+                               statusmessage=view.response.errmsg).encode('utf-8')
+
+    @classmethod
     def dumps(cls, pydata, view):
-        template = cls.template_environment.get_template(cls.template_name)
-        return template.render(**cls.get_template_data(pydata, view)).encode('utf-8')
+        if view.response.getStatus() < 300:
+            template = cls.template_environment.get_template(cls.template_name)
+            return template.render(**cls.get_template_data(pydata, view)).encode('utf-8')
+        else:
+            return cls.errorview(pydata, view)
 
 
 
