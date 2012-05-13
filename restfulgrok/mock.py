@@ -12,7 +12,11 @@ class MockResponse(object):
         self.headers.append((header, value))
 
     def setStatus(self, code, msg):
+        self.errmsg = msg
         self.status = (code, msg)
+
+    def getStatus(self):
+        return self.status[0]
 
 
 class MockRequest(object):
