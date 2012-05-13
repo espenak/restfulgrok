@@ -8,6 +8,22 @@ class CouldNotDetermineContentType(Exception):
     Raised when :meth:`GrokRestViewMixin.get_content_type` fails to detect a
     supported content-type.
     """
+    def __init__(self, querystring_error, acceptheader_error, acceptable_mimetypes):
+        self.querystring_error = querystring_error
+        self.acceptheader_error = acceptheader_error
+        self.acceptable_mimetypes = acceptable_mimetypes
+
+    def __str__(self):
+        error = ('{querystring_error}. {acceptheader_error}. '
+                 'Acceptable acceptable_mimetypes: '
+                 '{acceptable_mimetypes}').format(**self.__dict__)
+        return error
+
+    def asdict(self):
+        return dict(error=str(self),
+                    querystring_error=self.querystring_error,
+                    acceptheader_error=self.acceptheader_error,
+                    acceptable_mimetypes=self.acceptable_mimetypes)
 
 class GrokRestViewMixin(object):
     """
@@ -59,12 +75,17 @@ class GrokRestViewMixin(object):
         """
         from AccessControl.unauthorized import Unauthorized
         try:
-            self.authorize()
-            responsedata = self.handle()
-        except Unauthorized, e:
-            self.set_contenttype_header()
-            responsedata = self.response_401_unauthorized(str(e))
-        return self.encode_output_data(responsedata)
+            try:
+                self.authorize()
+                responsedata = self.handle()
+            except Unauthorized, e:
+                self.set_contenttype_header()
+                responsedata = self.response_401_unauthorized(str(e))
+            return self.encode_output_data(responsedata)
+        except CouldNotDetermineContentType, e:
+            # Note that we need to wrap both because set_contenttype_header
+            # uses get_content_type, which can raise CouldNotDetermineContentType.
+            return self.create_response(406, 'Not Acceptable', e.asdict())
 
     def get_content_type(self):
         """
@@ -75,12 +96,18 @@ class GrokRestViewMixin(object):
         mimetype = None
         querystring_mimetype = self.request.get('mimetype')
         acceptheader = self.request.getHeader('Accept')
+
         if querystring_mimetype and querystring_mimetype in self.content_types:
             mimetype = querystring_mimetype
-        elif acceptheader:
-            mimetype = self.content_types.negotiate_accept_header(acceptheader)
-        if not mimetype:
-            raise CouldNotDetermineContentType()
+        else:
+            querystring_error = 'No acceptable mimetype in QUERY_STRING: {0}'.format(querystring_mimetype)
+            if acceptheader:
+                mimetype = self.content_types.negotiate_accept_header(acceptheader)
+            if not mimetype:
+                acceptheader_error = 'No acceptable mimetype in ACCEPT header: {0}'.format(acceptheader)
+                raise CouldNotDetermineContentType(querystring_error=querystring_error,
+                                                   acceptheader_error=acceptheader_error,
+                                                   acceptable_mimetypes=self.content_types.get_mimetypelist())
         content_type = self.content_types[mimetype]
         self._content_type = content_type
         return content_type
