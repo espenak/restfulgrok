@@ -1,5 +1,6 @@
 from view import GrokRestViewMixin
 from fancyhtmlview import GrokRestViewWithFancyHtmlMixin
+from StringIO import StringIO
 
 
 class MockResponse(object):
@@ -19,9 +20,10 @@ class MockRequest(object):
                  headers={'Accept': 'application/json'}):
         self.method = method
         self.body = body
-        self.getdata = {'BODY': self.body}
+        self.getdata = {} #'BODY': self.body}
         self.getdata.update(getdata)
         self.headers = {}
+        self.stdin = StringIO(body)
         for header, value in headers.iteritems():
             self.headers[header.lower()] = value
 
