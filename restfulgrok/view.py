@@ -33,7 +33,6 @@ class GrokRestViewMixin(object):
     permissions = {'get': 'zope2.View',
                    'default': 'cmf.ModifyPortalContent'}
 
-
     def authorize(self):
         """
         Called by :meth:`.render` to authorize the user before calling :meth:`.handle`.
@@ -65,8 +64,7 @@ class GrokRestViewMixin(object):
         except Unauthorized, e:
             self.set_contenttype_header()
             responsedata = self.response_401_unauthorized(str(e))
-        finally:
-            return self.encode_output_data(responsedata)
+        return self.encode_output_data(responsedata)
 
     def get_content_type(self):
         """
