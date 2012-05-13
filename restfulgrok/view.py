@@ -63,8 +63,10 @@ class GrokRestViewMixin(object):
             self.authorize()
             responsedata = self.handle()
         except Unauthorized, e:
-            return self.response_401_unauthorized(str(e))
-        return self.encode_output_data(responsedata)
+            self.set_contenttype_header()
+            responsedata = self.response_401_unauthorized(str(e))
+        finally:
+            return self.encode_output_data(responsedata)
 
     def get_content_type(self):
         """
