@@ -26,10 +26,10 @@ class HtmlContentType(ContentType):
     #: Variable forwarded to the template as ``heading``.
     html_heading = html_title
 
-    #: jinja2 template name
+    #: jinja2 template name for the :meth:`.errorview`.
     error_template_name = 'restfulgrok/errorview.jinja.html'
 
-    #: jinja2 template name for the :meth:`.errorview`.
+    #: jinja2 template name for the normal html view (not for errors)
     template_name = 'restfulgrok/fancyhtmlview.jinja.html'
 
     #: The ``jinja2.Environment``
