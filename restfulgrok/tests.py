@@ -80,6 +80,8 @@ class TestGrokRestViewMixin(TestCase):
     def test_get_yaml(self):
         import yaml
         class View(MockRestView):
+            def authorize(self):
+                pass # Skip authorization
             def handle_get(self):
                 data = self.get_requestdata()
                 return data
@@ -98,6 +100,8 @@ class TestGrokRestViewMixin(TestCase):
 class TestGrokRestViewWithFancyHtmlMixin(TestCase):
     def test_handle_html(self):
         class View(MockRestViewWithFancyHtml):
+            def authorize(self):
+                pass # Skip authorization
             def handle_get(self):
                 return {'hello': 'world'}
         output = View(request=MockRequest('GET', getdata={'mimetype': 'text/html'})).render()
