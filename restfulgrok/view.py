@@ -160,7 +160,8 @@ class GrokRestViewMixin(object):
         Decode the body of the request using :meth:`decode_input_data`, and return the
         decoded data.
         """
-        raw_request_body = self.request.get('BODY', '')
+        self.request.stdin.seek(0)
+        raw_request_body = self.request.stdin.read()
         decoded = self.decode_input_data(raw_request_body)
         return decoded
 
