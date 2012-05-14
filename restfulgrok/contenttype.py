@@ -82,7 +82,7 @@ class JsonContentType(ContentType):
     def dumps(cls, pydata, view=None):
         try:
             return json.dumps(pydata, indent=2)
-        except ValueError, e:
+        except TypeError, e:
             raise ContentTypeDumpError(str(e))
 
     @classmethod

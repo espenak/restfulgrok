@@ -7,6 +7,8 @@ from mock import MockRestViewWithFancyHtml
 from contenttype import JsonContentType
 from contenttype import YamlContentType
 from contenttype import ContentTypesRegistry
+from contenttype import ContentTypeLoadError
+from contenttype import ContentTypeDumpError
 
 
 class MockRestViewAllImpl(MockRestView):
@@ -23,6 +25,35 @@ class MockRestViewAllImpl(MockRestView):
     def handle_head(self):
         return {'msg': 'HEAD called'}
 
+
+class TestContentType(TestCase):
+    def test_json_loads(self):
+        jsondata = """{
+            "portal_type": "ArticleReference",
+            "attributes": {"title": "Updated title"
+        }"""
+        with self.assertRaises(ContentTypeLoadError):
+            JsonContentType.loads(jsondata)
+
+    def test_json_dumps(self):
+        from datetime import date
+        with self.assertRaises(ContentTypeDumpError):
+            JsonContentType.dumps(date(2010, 1, 1))
+
+    def test_yaml_loads(self):
+        yamldata = """
+{portal_type: ArticleReference
+attributes:
+    title: Updated title
+        """
+        with self.assertRaises(ContentTypeLoadError):
+            YamlContentType.loads(yamldata)
+
+    def test_yaml_dumps(self):
+        class Tst(object):
+            pass
+        with self.assertRaises(ContentTypeDumpError):
+            YamlContentType.dumps(Tst())
 
 class TestGrokRestViewMixin(TestCase):
     def test_handle_unsupported(self):
