@@ -1,6 +1,7 @@
 from contenttype import YamlContentType
 from contenttype import JsonContentType
 from contenttype import ContentTypesRegistry
+from contenttype import ContentTypeError
 
 
 class CouldNotDetermineContentType(Exception):
@@ -81,6 +82,8 @@ class GrokRestViewMixin(object):
             except Unauthorized, e:
                 self.set_contenttype_header()
                 responsedata = self.response_401_unauthorized(str(e))
+            except ContentTypeError, e:
+                return self.response_400_bad_request({'error': str(e)})
             return self.encode_output_data(responsedata)
         except CouldNotDetermineContentType, e:
             # Note that we need to wrap both because set_contenttype_header
