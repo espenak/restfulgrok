@@ -3,17 +3,17 @@ import yaml
 import negotiator
 
 
-class ContentTypeParseError(Exception):
+class ContentTypeError(Exception):
     """
     Superclass for :class:`.ContentType` errors.
     """
 
-class ContentTypeLoadError(Exception):
+class ContentTypeLoadError(ContentTypeError):
     """
     Raised when :meth:`ContentType.loads` fails.
     """
 
-class ContentTypeDumpError(Exception):
+class ContentTypeDumpError(ContentTypeError):
     """
     Raised when :meth:`ContentType.dumps` fails.
     """
