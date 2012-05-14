@@ -206,7 +206,7 @@ class GrokRestViewMixin(object):
         """
         Encode the given python datastructure.
 
-        :raise ValueError: If ``pydata`` can not be encoded.
+        :raise restfulgrok.contenttype.ContentTypeDumpError: If ``pydata`` can not be encoded.
         """
         return self.get_content_type().dumps(pydata, self)
 
@@ -214,7 +214,7 @@ class GrokRestViewMixin(object):
         """
         Decode the given ``rawdata``.
 
-        :raise ValueError: If ``rawdata`` can not be decoded.
+        :raise restfulgrok.contenttype.ContentTypeLoadError: If ``rawdata`` can not be decoded.
         """
         return self.get_content_type().loads(rawdata, self)
 

@@ -3,6 +3,23 @@ import yaml
 import negotiator
 
 
+class ContentTypeParseError(Exception):
+    """
+    Superclass for :class:`.ContentType` errors.
+    """
+
+class ContentTypeLoadError(Exception):
+    """
+    Raised when :meth:`ContentType.loads` fails.
+    """
+
+class ContentTypeDumpError(Exception):
+    """
+    Raised when :meth:`ContentType.dumps` fails.
+    """
+
+
+
 class ContentType(object):
     """
     Superclass for all content-types for the :class:`.ContentTypesRegistry`.
@@ -63,11 +80,17 @@ class JsonContentType(ContentType):
 
     @classmethod
     def dumps(cls, pydata, view=None):
-        return json.dumps(pydata, indent=2)
+        try:
+            return json.dumps(pydata, indent=2)
+        except ValueError, e:
+            raise ContentTypeDumpError(str(e))
 
     @classmethod
     def loads(cls, rawdata, view=None):
-        return json.loads(rawdata)
+        try:
+            return json.loads(rawdata)
+        except ValueError, e:
+            raise ContentTypeLoadError(str(e))
 
 class YamlContentType(ContentType):
     """
@@ -82,14 +105,14 @@ class YamlContentType(ContentType):
         try:
             return yaml.safe_dump(pydata, default_flow_style=False)
         except yaml.YAMLError, e:
-            raise ValueError(str(e))
+            raise ContentTypeDumpError(str(e))
 
     @classmethod
     def loads(cls, rawdata, view=None):
         try:
             return yaml.safe_load(rawdata)
         except yaml.YAMLError, e:
-            raise ValueError(str(e))
+            raise ContentTypeLoadError(str(e))
 
 
 class ContentTypesRegistry(object):
