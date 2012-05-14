@@ -84,13 +84,17 @@ class JsonContentType(ContentType):
             return json.dumps(pydata, indent=2)
         except TypeError, e:
             raise ContentTypeDumpError(str(e))
+        except ValueError, e:
+            raise ContentTypeDumpError(str(e))
 
     @classmethod
     def loads(cls, rawdata, view=None):
         try:
             return json.loads(rawdata)
-        except ValueError, e:
+        except TypeError, e:
             raise ContentTypeLoadError(str(e))
+        except ValueError, e:
+            raise ContentTypeDumpError(str(e))
 
 class YamlContentType(ContentType):
     """
