@@ -88,8 +88,10 @@ class GrokRestViewMixin(object):
             try:
                 return self.encode_output_data(responsedata)
             except ContentTypeError, e:
-                self.set_contenttype_header()
-                return self.response_400_bad_request(str(e))
+                self.set_contenttype_header('text/plain')
+                contenttype = self.get_content_type()
+                errormsg = 'COULD NOT ENCODE ERROR MESSAGE AS: {contenttype}.\n\nError\n==================\n\n{e}'.format(**vars())
+                return self.response_400_bad_request(errormsg)
         except CouldNotDetermineContentType, e:
             # Note that we need to wrap both because set_contenttype_header
             # uses get_content_type, which can raise CouldNotDetermineContentType.
@@ -129,12 +131,13 @@ class GrokRestViewMixin(object):
             filename = '{0}.{1}'.format(self.context.id, self.get_content_type().extension)
             self.response.setHeader('Content-Disposition', 'attachment; filename={0}'.format(filename))
 
-    def set_contenttype_header(self):
+    def set_contenttype_header(self, mimetype=None):
         """
         Set the content type header. Called by :meth:`handle`, and may be overridden.
         """
+        mimetype = mimetype or self.get_content_type().mimetype
         self.response.setHeader('Content-Type',
-                                '{0}; charset=UTF-8'.format(self.get_content_type().mimetype))
+                                '{0}; charset=UTF-8'.format(mimetype))
 
     def handle(self):
         """
