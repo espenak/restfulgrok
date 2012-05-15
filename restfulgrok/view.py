@@ -47,8 +47,8 @@ class GrokRestViewMixin(object):
     #: You should have one (lowercase) key for each request method in
     #: :obj:`.supported_methods`, or a "default" key defining a default
     #: permission.
-    permissions = {'get': 'zope2.View',
-                   'default': 'cmf.ModifyPortalContent'}
+    permissions = {'get': 'View',
+                   'default': 'Modify portal content'}
 
     def authorize(self):
         """
