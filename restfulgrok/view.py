@@ -85,7 +85,11 @@ class GrokRestViewMixin(object):
             except ContentTypeError, e:
                 self.set_contenttype_header()
                 responsedata = self.response_400_bad_request({'error': str(e)})
-            return self.encode_output_data(responsedata)
+            try:
+                return self.encode_output_data(responsedata)
+            except ContentTypeError, e:
+                self.set_contenttype_header()
+                return self.response_400_bad_request(str(e))
         except CouldNotDetermineContentType, e:
             # Note that we need to wrap both because set_contenttype_header
             # uses get_content_type, which can raise CouldNotDetermineContentType.
