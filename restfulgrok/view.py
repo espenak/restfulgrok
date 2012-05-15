@@ -48,6 +48,8 @@ class GrokRestViewMixin(object):
     #: :obj:`.supported_methods`, or a "default" key defining a default
     #: permission.
     permissions = {'get': 'View',
+                   'post': 'Add portal content',
+                   'put': 'Modify portal content',
                    'default': 'Modify portal content'}
 
     def authorize(self):
@@ -62,7 +64,9 @@ class GrokRestViewMixin(object):
         """
         from AccessControl import Unauthorized, getSecurityManager
         method = self.get_requestmethod()
-        permission = self.permissions.get(method, self.permissions['default'])
+        permission = self.permissions.get(method)
+        if not permission:
+            permission = self.permissions['default']
         if not getSecurityManager().checkPermission(permission, self):
             raise Unauthorized('Not authorized for: {0} requests. '
                                'Required permission: {1}'.format(method.upper(),
