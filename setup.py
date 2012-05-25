@@ -10,7 +10,7 @@ setup(name = 'restfulgrok',
       author = 'Espen Angell Kristiansen',
       packages=find_packages(exclude=['ez_setup']),
       install_requires = ['distribute', 'PyYAML', 'Jinja2', 'negotiator'],
-      long_description=open('README.rst').read(),
+      long_description='See https://github.com/espenak/restfulgrok',
       include_package_data=True,
       zip_safe=True,
       classifiers=[
