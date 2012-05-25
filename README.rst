@@ -25,7 +25,7 @@ Install
 Usage
 =====
 
-TODO
+See: http://restfulgrok.readthedocs.org/
 
 
 
