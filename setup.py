@@ -17,7 +17,7 @@ setup(name = 'restfulgrok',
       classifiers=[
                    'Development Status :: 5 - Production/Stable',
                    'Environment :: Web Environment',
-                   'Framework :: Zope',
+                   'Framework :: Plone',
                    'Intended Audience :: Developers',
                    'License :: OSI Approved',
                    'Operating System :: OS Independent',
